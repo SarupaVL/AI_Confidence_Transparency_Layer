@@ -1,5 +1,6 @@
 # Environment variables
 .env
+backend/.env
 
 # Virtual environment
 conftranslaye/
@@ -23,3 +24,12 @@ htmlcov/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env*.local
+
+# Frontend env files (all)
+*.env.local
