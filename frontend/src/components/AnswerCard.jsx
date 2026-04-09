@@ -2,47 +2,14 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 
 export default function AnswerCard({ answer, highlightedAnswer, showRaw, onToggle }) {
-  // Parse highlighted answer — replace markers with JSX spans
-  const renderHighlighted = (text) => {
-    if (!text) return null;
-
-    // Split on our markers and render with appropriate styles
-    const parts = [];
-    let remaining = text;
-
-    // Regex to match [INCORRECT: ...] and [UNVERIFIED: ...]
-    const markerRegex = /\[(INCORRECT|UNVERIFIED): ([^\]]+)\]/g;
-    let lastIndex = 0;
-    let match;
-
-    while ((match = markerRegex.exec(text)) !== null) {
-      // Push plain text before marker
-      if (match.index > lastIndex) {
-        parts.push(
-          <span key={lastIndex}>{text.slice(lastIndex, match.index)}</span>
-        );
-      }
-
-      const isContradicted = match[1].includes("INCORRECT");
-      parts.push(
-        <span
-          key={match.index}
-          className={isContradicted ? "highlight-contradicted" : "highlight-uncertain"}
-          title={isContradicted ? "This claim may be factually incorrect" : "This claim could not be independently verified"}
-        >
-          {match[2]}
-        </span>
-      );
-      lastIndex = match.index + match[0].length;
-    }
-
-    // Trailing plain text
-    if (lastIndex < text.length) {
-      parts.push(<span key={lastIndex}>{text.slice(lastIndex)}</span>);
-    }
-
-    return parts.length > 0 ? parts : <span>{text}</span>;
-  };
+  // Translate markers into markdown links that we can hijack in the custom renderer
+  // We use resilient regexes to handle both the old ⚠️ format and the new format in case backend didn't reload
+  const contentToParse = showRaw
+    ? answer
+    : (highlightedAnswer || answer)
+        .replace(/\[(?:⚠️\s*)?POSSIBLY INCORRECT: ([^\]]+)\]/g, "[$1](#incorrect)")
+        .replace(/\[INCORRECT: ([^\]]+)\]/g, "[$1](#incorrect)")
+        .replace(/\[(?:❓\s*)?UNVERIFIED: ([^\]]+)\]/g, "[$1](#unverified)");
 
   return (
     <div className="answer-card fade-in">
@@ -53,13 +20,30 @@ export default function AnswerCard({ answer, highlightedAnswer, showRaw, onToggl
       </div>
 
       <div className="markdown-body">
-        {showRaw ? (
-          <ReactMarkdown>{answer}</ReactMarkdown>
-        ) : (
-          <div className="highlighted-answer">
-            {renderHighlighted(highlightedAnswer || answer)}
-          </div>
-        )}
+        <ReactMarkdown
+          components={{
+            a: ({ node, ...props }) => {
+              if (props.href && props.href.includes("#incorrect")) {
+                return (
+                  <span className="highlight-contradicted" title="This claim may be factually incorrect">
+                    {props.children}
+                  </span>
+                );
+              }
+              if (props.href && props.href.includes("#unverified")) {
+                return (
+                  <span className="highlight-uncertain" title="This claim could not be independently verified">
+                    {props.children}
+                  </span>
+                );
+              }
+              // Normal link fallback
+              return <a {...props}>{props.children}</a>;
+            }
+          }}
+        >
+          {contentToParse}
+        </ReactMarkdown>
       </div>
 
       {!showRaw && (highlightedAnswer !== answer) && (
