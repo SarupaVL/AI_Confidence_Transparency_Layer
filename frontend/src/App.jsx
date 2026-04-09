@@ -89,6 +89,7 @@ function App() {
 
   return (
     <div className="layout-wrapper">
+      <NeuralBackground />
       <nav className="navbar">
         <div className="nav-brand" onClick={() => setActivePage("chat")} style={{cursor: 'pointer'}}>
           <span className="logo-icon">⬡</span>
@@ -123,7 +124,6 @@ function App() {
             <div className="chat-area">
               {!result && !loading && chatHistory.length === 0 ? (
                 <div className="landing-hero fade-in">
-                  <div className="bg-container"><NeuralBackground /></div>
                   <div className="landing-content-front">
                     <h2>Understand what the AI <em>actually</em> knows.</h2>
                     <p>
