@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PromptBox from "./components/PromptBox";
 import AnswerCard from "./components/AnswerCard";
-import ConfidenceBar from "./components/ConfidenceBar";
+import ConfidenceDashboard from "./components/ConfidenceBar";
 import "./App.css";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
@@ -45,7 +45,7 @@ function App() {
           <h1>AI Confidence Transparency Layer</h1>
         </div>
         <p className="subtitle">
-          Ask anything. See how confident the AI actually is — not just what it says.
+          Ask anything. See how confident the AI actually is — built on a multi-signal verification pipeline.
         </p>
       </header>
 
@@ -62,20 +62,25 @@ function App() {
         {loading && (
           <div className="loading-state">
             <div className="spinner" />
-            <p>Generating 3 responses and computing confidence…</p>
+            <p>Sampling variants, perturbing facts, and computing confidence signals…</p>
           </div>
         )}
 
         {result && (
           <div className="result-section">
-            <ConfidenceBar level={result.confidence} score={result.score} reason={result.reason} />
-            <AnswerCard answer={result.answer} variants={result.variants} />
+            <ConfidenceDashboard 
+                level={result.confidence_level} 
+                score={result.score} 
+                reason={result.reason} 
+                signals={result.signals} 
+            />
+            <AnswerCard answer={result.answer} />
           </div>
         )}
       </main>
 
       <footer className="app-footer">
-        Built with FastAPI + Hugging Face + React · Cloud Run + Vercel · ₹0 spent
+        Built with FastAPI + Hugging Face + React · Multi-Axis Calibration Layer
       </footer>
     </div>
   );

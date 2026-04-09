@@ -1,30 +1,19 @@
 # AI Confidence Transparency Layer
 
-### What is this?
-Basically, LLMs (like GPT or Mistral) are really good at sounding right even when they're totally guessing or making things up. This project is a way to see "under the hood" of how sure an AI actually is about its answer. 
-
-Instead of just getting an answer, you get a transparency layer that tells you if the AI is consistent or if it's just hallucinating.
-
-### 📌 The Problem
-A lot of people just trust whatever an AI spits out because it sounds fluent. But fluency != accuracy. This app estimates confidence by asking the model the same thing a few times and seeing if it gives the same answer.
-
-### ⚙️ How it works
-1. You type a prompt.
-2. The backend hits the Hugging Face API and gets **multiple** responses (we tweak the temperature/parameters to see if it changes its mind).
-3. We compare how similar those answers are using some math (sentence embeddings).
-4. **Calculated Confidence:**
-   - They all say the same thing? -> **High Confidence**
-   - They mostly agree but some details change? -> **Medium Confidence**
-   - Every answer is different? -> **Low Confidence**
-
-### 🛠 Tech Stack
-*   **Frontend:** React (Vite) - *keeps it fast*
-*   **Backend:** FastAPI (Python) - *handles the logic and similarity checks*
-*   **AI Side:** Hugging Face Inference API (Mistral-7B mostly)
-*   **Deployment:** Cloud Run (back) + Vercel (front)
-
-### 🎯 Purpose
-This isn't about training a new model. It's about building a better UI/UX for AI where uncertainty isn't hidden. It's just a student project to show how we can make AI more explainable for normal users.
+A model-agnostic layer that evaluates AI-generated responses for factual confidence and reliability, breaking down an LLM's certainty across an advanced 5-layer pipeline.
 
 ---
 *Roughly put together for a college project.*
+
+## 🧠 Architecture
+- **Layer 1: Multi-Sampling Engine** – Samples completions at varying temperatures.
+- **Layer 2: Prompt Perturbation Engine** – Modifies prompts to test output robustness.
+- **Layer 3: Claim Extraction Engine** – Breaks down text into atomic facts and checks semantic overlap/contradiction.
+- **Layer 4: Verification Engine** – Subjects the answer to zero-temperature adversarial judgment.
+- **Layer 5: Calibration Engine** – Penalizes subjective, hedged language and rewards factual specificity.
+
+## 🚀 Running Locally
+Run the convenient startup script to launch both the backend (FastAPI) and frontend (React):
+```cmd
+start.bat
+```

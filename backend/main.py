@@ -1,8 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from model import generate_variants
-from confidence import compute_confidence
+from controller import analyze
 
 app = FastAPI(title="AI Confidence Transparency Layer")
 
@@ -17,33 +16,42 @@ app.add_middleware(
 class PromptRequest(BaseModel):
     prompt: str
 
+class SignalsBreakdown(BaseModel):
+    robustness: float
+    verifiability: float
+    calibration: float
+    contradiction: float
+
 class AnalyzeResponse(BaseModel):
     answer: str
-    confidence: str
+    confidence_level: str
     score: float
+    signals: SignalsBreakdown
     reason: str
-    variants: list[str]
 
 @app.get("/")
 def root():
     return {"status": "ok", "message": "AI Confidence Transparency Layer is running."}
 
 @app.post("/analyze", response_model=AnalyzeResponse)
-def analyze(req: PromptRequest):
+def analyze_endpoint(req: PromptRequest):
     if not req.prompt.strip():
         raise HTTPException(status_code=400, detail="Prompt cannot be empty.")
 
-    variants = generate_variants(req.prompt)
-
-    if all(v.startswith("Error") for v in variants):
-        raise HTTPException(status_code=502, detail="All model calls failed. Check your HF token.")
-
-    confidence_result = compute_confidence(variants)
-
-    return AnalyzeResponse(
-        answer=variants[1],          # middle-temperature response as primary answer
-        confidence=confidence_result["level"],
-        score=confidence_result["score"],
-        reason=confidence_result["reason"],
-        variants=variants,
-    )
+    try:
+        result = analyze(req.prompt)
+        # Check if model call failed immediately on primary answer
+        if result["answer"].startswith("Error"):
+             raise HTTPException(status_code=502, detail=f"Model call failed: {result['answer']}")
+             
+        return AnalyzeResponse(
+            answer=result["answer"],
+            confidence_level=result["confidence_level"],
+            score=result["score"],
+            signals=result["signals"],
+            reason=result["reason"]
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
