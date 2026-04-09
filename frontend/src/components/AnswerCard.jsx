@@ -10,8 +10,8 @@ export default function AnswerCard({ answer, highlightedAnswer, showRaw, onToggl
     const parts = [];
     let remaining = text;
 
-    // Regex to match [⚠️ POSSIBLY INCORRECT: ...] and [❓ UNVERIFIED: ...]
-    const markerRegex = /\[(⚠️ POSSIBLY INCORRECT|❓ UNVERIFIED): ([^\]]+)\]/g;
+    // Regex to match [INCORRECT: ...] and [UNVERIFIED: ...]
+    const markerRegex = /\[(INCORRECT|UNVERIFIED): ([^\]]+)\]/g;
     let lastIndex = 0;
     let match;
 
@@ -23,14 +23,14 @@ export default function AnswerCard({ answer, highlightedAnswer, showRaw, onToggl
         );
       }
 
-      const isContradicted = match[1].includes("POSSIBLY INCORRECT");
+      const isContradicted = match[1].includes("INCORRECT");
       parts.push(
         <span
           key={match.index}
           className={isContradicted ? "highlight-contradicted" : "highlight-uncertain"}
           title={isContradicted ? "This claim may be factually incorrect" : "This claim could not be independently verified"}
         >
-          {isContradicted ? "⚠️" : "❓"} {match[2]}
+          {match[2]}
         </span>
       );
       lastIndex = match.index + match[0].length;
@@ -47,7 +47,6 @@ export default function AnswerCard({ answer, highlightedAnswer, showRaw, onToggl
   return (
     <div className="answer-card fade-in">
       <div className="answer-card-header">
-        <h3>AI Response</h3>
         <button className="toggle-btn" onClick={onToggle}>
           {showRaw ? "🔍 Show Highlighted" : "📄 Show Plain"}
         </button>
@@ -65,8 +64,8 @@ export default function AnswerCard({ answer, highlightedAnswer, showRaw, onToggl
 
       {!showRaw && (highlightedAnswer !== answer) && (
         <div className="highlight-legend">
-          <span className="legend-item highlight-contradicted">⚠️ Possibly incorrect</span>
-          <span className="legend-item highlight-uncertain">❓ Unverified claim</span>
+          <span className="legend-item highlight-contradicted">Possibly incorrect</span>
+          <span className="legend-item highlight-uncertain">Unverified claim</span>
           <span className="legend-item legend-ok">Plain text = Supported</span>
         </div>
       )}

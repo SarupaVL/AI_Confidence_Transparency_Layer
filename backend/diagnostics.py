@@ -53,9 +53,9 @@ def highlight_text(answer: str, claim_results: list[dict]) -> str:
         status = c["status"]
 
         if status == "contradicted":
-            marker = f"[⚠️ POSSIBLY INCORRECT: {claim_text}]"
+            marker = f"[INCORRECT: {claim_text}]"
         elif status == "uncertain":
-            marker = f"[❓ UNVERIFIED: {claim_text}]"
+            marker = f"[UNVERIFIED: {claim_text}]"
         else:
             continue  # Leave supported claims untouched
 

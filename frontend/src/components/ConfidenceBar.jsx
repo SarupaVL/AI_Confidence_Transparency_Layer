@@ -55,24 +55,30 @@ export default function ConfidenceDashboard({ level, score, signals, taskType })
               stroke={getLevelColor(level)}
               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
             />
-            <text x="18" y="20.35" className="percentage">{pct(score)}</text>
+            <text x="50%" y="54%" dominantBaseline="middle" textAnchor="middle" className="percentage">{pct(score)}</text>
           </svg>
           <div className="level-info">
             <h2 style={{ color: getLevelColor(level) }}>{level} Confidence</h2>
             <p className="score-sub">
               {taskType === "creative"
-                ? "🎨 Quality score — not factual correctness"
+                ? "Quality score — not factual correctness"
                 : taskType === "analytical"
-                ? "🔍 Analytical task — reasoning consistency weighted"
-                : "📋 Factual task — verification & consistency weighted"}
+                ? "Analytical task — reasoning consistency weighted"
+                : "Factual task — verification & consistency weighted"}
             </p>
           </div>
         </div>
 
         <div className="weight-legend">
-          <span>Robustness <strong>40%</strong></span>
-          <span>Verifiability <strong>40%</strong></span>
-          <span>Calibration <strong>20%</strong></span>
+          {taskType === "creative" ? (
+            <span>Calibration <strong>100%</strong></span>
+          ) : (
+            <>
+              <span>Robustness <strong>40%</strong></span>
+              <span>Verifiability <strong>40%</strong></span>
+              <span>Calibration <strong>20%</strong></span>
+            </>
+          )}
         </div>
       </div>
 

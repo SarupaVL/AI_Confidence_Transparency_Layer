@@ -9,24 +9,24 @@ const STATUS_CONFIG = {
     label: "Supported",
   },
   uncertain: {
-    color: "#f59e0b",
-    bg: "rgba(245, 158, 11, 0.08)",
-    border: "rgba(245, 158, 11, 0.25)",
-    icon: "❓",
+    color: "#eab308",
+    bg: "rgba(234, 179, 8, 0.08)",
+    border: "rgba(234, 179, 8, 0.25)",
+    icon: "?",
     label: "Unverified",
   },
   contradicted: {
     color: "#ef4444",
     bg: "rgba(239, 68, 68, 0.08)",
     border: "rgba(239, 68, 68, 0.25)",
-    icon: "⚠",
+    icon: "!",
     label: "Contradicted",
   },
   creative: {
     color: "#a78bfa",
     bg: "rgba(167, 139, 250, 0.08)",
     border: "rgba(167, 139, 250, 0.25)",
-    icon: "✦",
+    icon: "◆",
     label: "Creative",
   },
 };
@@ -45,12 +45,12 @@ export default function ClaimsAnalysis({ claims, taskType }) {
       <div className="claims-header">
         <h3>Claim-Level Analysis</h3>
         {isCreative ? (
-          <span className="creative-note">🎨 Quality review only — factual verification not applicable</span>
+          <span className="creative-note">Quality review only — factual verification not applicable</span>
         ) : (
           <div className="claims-summary">
             <span style={{ color: "#10b981" }}>✓ {supported} supported</span>
-            <span style={{ color: "#f59e0b" }}>❓ {uncertain} unverified</span>
-            <span style={{ color: "#ef4444" }}>⚠ {contradicted} contradicted</span>
+            <span style={{ color: "#eab308" }}>? {uncertain} unverified</span>
+            <span style={{ color: "#ef4444" }}>! {contradicted} contradicted</span>
           </div>
         )}
       </div>
