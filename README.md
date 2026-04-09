@@ -1,19 +1,48 @@
 # AI Confidence Transparency Layer
 
-A model-agnostic layer that evaluates AI-generated responses for factual confidence and reliability, breaking down an LLM's certainty across an advanced 5-layer pipeline.
+A model-agnostic layer that evaluates AI-generated responses for factual confidence and reliability, using an 8-layer pipeline including risk classification, claim-level hallucination detection, and task-aware scoring.
 
 ---
-*Roughly put together for a college project.*
+*College project.*
 
 ## 🧠 Architecture
-- **Layer 1: Multi-Sampling Engine** – Samples completions at varying temperatures.
-- **Layer 2: Prompt Perturbation Engine** – Modifies prompts to test output robustness.
-- **Layer 3: Claim Extraction Engine** – Breaks down text into atomic facts and checks semantic overlap/contradiction.
-- **Layer 4: Verification Engine** – Subjects the answer to zero-temperature adversarial judgment.
-- **Layer 5: Calibration Engine** – Penalizes subjective, hedged language and rewards factual specificity.
+
+```
+Prompt
+  ↓ Task Classifier (creative / analytical / factual)
+  ↓ Multi-Sampling Engine
+  ↓ Prompt Perturbation Engine
+  ↓ Claim Extraction Engine
+  ↓ Verification Engine (per-claim + whole-answer)
+  ↓ Calibration Engine
+  ↓ Confidence Aggregation (task-type aware weighting)
+  ↓ Risk Classifier (SAFE / UNCERTAIN / RISKY / CREATIVE)
+  ↓ Claim-Level Diagnostics (hallucination highlighting)
+  ↓ Explanation Generator
+  ↓ Final output + highlighted answer + signals breakdown
+```
+
+## 📦 Signals
+
+| Signal | Weight (factual) | Meaning |
+|---|---|---|
+| Robustness | 40% | Semantic consistency across sampling variants |
+| Verifiability | 40% | Self-verified factual correctness |
+| Calibration | 20% | Specificity vs. hedging language ratio |
+| Contradiction | Penalty | Negation density across variants |
+
+Creative tasks use **calibration only** — factual verification is skipped.
 
 ## 🚀 Running Locally
-Run the convenient startup script to launch both the backend (FastAPI) and frontend (React):
-```cmd
-start.bat
+
+Double-click `start.bat` to launch both backend and frontend:
+
 ```
+Backend  → http://localhost:8080
+Frontend → http://localhost:5173
+```
+
+## 🛠 Tech Stack
+
+- **Backend**: FastAPI, Python, Hugging Face (Qwen2.5-72B-Instruct), sentence-transformers
+- **Frontend**: React, Vite, CSS
