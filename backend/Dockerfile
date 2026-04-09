@@ -13,9 +13,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the backend source code
 COPY . .
 
-# Expose the Cloud Run default port
-EXPOSE 8080
+# Expose the Hugging Face Space default port
+EXPOSE 7860
 
 # Run the FastAPI server using Uvicorn
-# Cloud Run sets the PORT environment variable automatically
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]
+# Cloud Run sets the PORT environment variable automatically, but HF Spaces defaults to 7860
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-7860}"]
